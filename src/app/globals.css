@@ -13,7 +13,7 @@
 
   --rounded-xl: 12px;
   --rounded-2xl: 16px;
-  
+
   --font-fredoka: var(--font-fredoka);
 }
 
@@ -45,7 +45,7 @@ body {
     @apply bg-duo-blue hover:opacity-90;
     border-bottom-color: var(--color-duo-blue-dark);
   }
-  
+
   .duo-button-outline {
     @apply bg-white text-duo-gray hover:bg-gray-50;
     border: 2px solid var(--color-duo-gray);

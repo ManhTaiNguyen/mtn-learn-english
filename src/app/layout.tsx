@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Fredoka } from "next/font/google";
+import { Nunito } from "next/font/google";
+import { Providers } from "@/components/Providers";
 import "./globals.css";
 
-const fredoka = Fredoka({
-  subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-fredoka",
+const nunito = Nunito({
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-nunito",
 });
 
 export const metadata: Metadata = {
-  title: "KET Platform | Luyện thi Tiếng Anh KET",
+  title: "KET Platform - Luyện thi Tiếng Anh Chuyên nghiệp",
   description:
-    "Nền tảng ôn luyện và thi thử KET hiệu quả, vui nhộn theo phong cách Duolingo.",
+    "Nền tảng ôn luyện và thi thử KET hiệu quả, vui nhộn theo phong cách học tập chủ động.",
 };
 
 export default function RootLayout({
@@ -20,8 +21,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${fredoka.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-fredoka">{children}</body>
+    <html
+      lang="vi"
+      className={`${nunito.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body
+        className="min-h-full font-nunito bg-background"
+        suppressHydrationWarning
+      >
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
