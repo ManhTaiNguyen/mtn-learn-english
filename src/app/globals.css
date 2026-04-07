@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-duo-green: #58cc02;
+  --color-duo-green-dark: #46a302;
+  --color-duo-green-light: #89e219;
+  --color-duo-blue: #1cb0f6;
+  --color-duo-blue-dark: #109cd7;
+  --color-duo-yellow: #ffc800;
+  --color-duo-red: #ff4b4b;
+  --color-duo-gray: #e5e5e5;
+  --color-duo-text: #4b4b4b;
+
+  --rounded-xl: 12px;
+  --rounded-2xl: 16px;
+  
+  --font-fredoka: var(--font-fredoka);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #4b4b4b;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .duo-button {
+    @apply relative inline-flex items-center justify-center px-6 py-3 font-bold text-white transition-all rounded-2xl active:translate-y-1;
+    border-bottom: 4px solid currentColor;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .duo-button-green {
+    @apply bg-duo-green hover:bg-duo-green-light;
+    border-bottom-color: var(--color-duo-green-dark);
+  }
+
+  .duo-button-blue {
+    @apply bg-duo-blue hover:opacity-90;
+    border-bottom-color: var(--color-duo-blue-dark);
+  }
+  
+  .duo-button-outline {
+    @apply bg-white text-duo-gray hover:bg-gray-50;
+    border: 2px solid var(--color-duo-gray);
+    border-bottom-width: 4px;
+  }
+}

@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+  teacher
+}
+
+enum Mode {
+  EXAM
+  PRACTICE
+}
+
+enum AttemptStatus {
+  in_progress
+  submitted
+  expired
+}
+
+model Account {
+  id                   Int           @id @default(autoincrement())
+  email                String        @unique @db.VarChar(150)
+  password_hash        String        @db.VarChar(255)
+  role                 Role          @default(user)
+  is_active            Boolean       @default(true)
+  email_verified       Boolean       @default(false)
+  failed_login_count   Int           @default(0)
+  locked_until         DateTime?
+  password_reset_token String?       @db.VarChar(255)
+  password_reset_expires DateTime?
+  last_login_at        DateTime?
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
+
+  info                 AccountInfo?
+  attempts             Attempt[]
+
+  @@map("accounts")
+}
+
+model AccountInfo {
+  id           Int      @id @default(autoincrement())
+  account_id   Int      @unique
+  full_name    String?  @db.VarChar(255)
+  avatar_url   String?  @db.Text
+  phone_number String?  @db.VarChar(20)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  account      Account  @relation(fields: [account_id], references: [id], onDelete: Cascade)
+
+  @@map("account_info")
+}
+
+model AnonymousSession {
+  id          String    @id @default(uuid()) @db.VarChar(36)
+  ip_address  String?   @db.VarChar(45)
+  fingerprint String?   @db.VarChar(255)
+  created_at  DateTime  @default(now())
+  expires_at  DateTime
+
+  attempts    Attempt[]
+
+  @@map("anonymous_sessions")
+}
+
+model ExamSet {
+  id           Int       @id @default(autoincrement())
+  title        String    @db.VarChar(255)
+  slug         String    @unique @db.VarChar(255)
+  is_published Boolean   @default(false)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+
+  exams        Exam[]
+
+  @@map("exam_sets")
+}
+
+model Exam {
+  id           Int       @id @default(autoincrement())
+  exam_set_id  Int
+  skill_type   String    @db.VarChar(50)
+  duration_sec Int
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+
+  exam_set     ExamSet   @relation(fields: [exam_set_id], references: [id], onDelete: Cascade)
+  parts        Part[]
+  attempts     Attempt[]
+
+  @@map("exams")
+}
+
+model Part {
+  id          Int       @id @default(autoincrement())
+  exam_id     Int
+  order_index Int
+  title       String?   @db.VarChar(255)
+  instruction String?   @db.Text
+  audio_url   String?   @db.Text
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+
+  exam        Exam      @relation(fields: [exam_id], references: [id], onDelete: Cascade)
+  questions   Question[]
+
+  @@map("parts")
+}
+
+model Question {
+  id           Int       @id @default(autoincrement())
+  part_id      Int
+  order_index  Int
+  type         String    @db.VarChar(50)
+  data_json    Json
+  score_weight Int       @default(1)
+  explanation  String?   @db.Text
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+
+  part         Part      @relation(fields: [part_id], references: [id], onDelete: Cascade)
+  answers      Answer[]
+
+  @@map("questions")
+}
+
+model Attempt {
+  id           Int           @id @default(autoincrement())
+  mode         Mode
+  exam_id      Int
+  account_id   Int?
+  anonymous_id String?       @db.VarChar(36)
+  status       AttemptStatus @default(in_progress)
+  started_at   DateTime      @default(now())
+  submitted_at DateTime?
+  expires_at   DateTime
+  total_score  Int?
+  score_json   Json?
+
+  exam         Exam              @relation(fields: [exam_id], references: [id], onDelete: Cascade)
+  account      Account?          @relation(fields: [account_id], references: [id], onDelete: SetNull)
+  anonymous    AnonymousSession? @relation(fields: [anonymous_id], references: [id], onDelete: SetNull)
+  answers      Answer[]
+
+  @@map("attempts")
+}
+
+model Answer {
+  id             Int      @id @default(autoincrement())
+  attempt_id     Int
+  question_id    Int
+  answer_json    Json
+  is_correct     Boolean?
+  score_achieved Int?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  attempt        Attempt  @relation(fields: [attempt_id], references: [id], onDelete: Cascade)
+  question       Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
+  @@unique([attempt_id, question_id], name: "idx_uniq_answer")
+  @@map("answers")
+}
