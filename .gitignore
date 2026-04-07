@@ -1,0 +1,39 @@
+# ============================================
+# KET Platform - .gitignore
+# Giai đoạn: Documentation & Planning
+# Sẽ bổ sung thêm khi init Next.js project
+# ============================================
+
+# === Environment variables (BẮT BUỘC) ===
+# Chứa DATABASE_URL, NEXTAUTH_SECRET, API keys...
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# === Agent/Tool configs (cục bộ) ===
+.agents/
+
+# === Plans nội bộ (không push public) ===
+plans/
+
+# === OS generated files ===
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# === IDE / Editor ===
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+
+# === Logs ===
+*.log
+npm-debug.log*
+yarn-debug.log*
